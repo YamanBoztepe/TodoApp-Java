@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import com.yeditepe.todo.dao.UserDao;
+import com.yeditepe.todo.helper.UserInfo;
 import com.yeditepe.todo.model.User;
 
 @WebServlet("/signUp")
@@ -44,8 +45,14 @@ public class SignUpServlet extends HttpServlet {
 		String gender = request.getParameter("select");
 		int intGender = gender == "male" ? 1 : 0;
 		UserDao dao = new UserDao();
+		Integer userId = dao.getUserId(username);
 		int isSuccess = dao.signUp(username, password, name, intGender);
-		String path = isSuccess == 1 ? "todo" : "view/signup/signupFail.jsp";
-		response.sendRedirect(path);
+		if (isSuccess == 1 && userId != -1) {
+			User user = new User(userId, username, password, name, intGender);
+			UserInfo.shared.setUser(user);
+			response.sendRedirect("view/todo/todo.jsp");
+		} else {
+			response.sendRedirect("view/signup/signupFail.jsp");
+		}
 	}
 }

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import com.yeditepe.todo.dao.UserDao;
+import com.yeditepe.todo.helper.UserInfo;
 import com.yeditepe.todo.model.User;
 
 @WebServlet("/login")
@@ -42,8 +43,12 @@ public class LoginServlet extends HttpServlet {
 		String password = request.getParameter("password");
 		UserDao dao = new UserDao();
 		User user = dao.logIn(username, password);
-		String path = user != null ? "todo" : "view/login/loginFail.jsp";
-		response.sendRedirect(path);
+		if (user != null) {
+			UserInfo.shared.setUser(user);
+			response.sendRedirect("view/todo/todo.jsp");
+		} else {
+			response.sendRedirect("view/login/loginFail.jsp");
+		}
 	}
 
 }

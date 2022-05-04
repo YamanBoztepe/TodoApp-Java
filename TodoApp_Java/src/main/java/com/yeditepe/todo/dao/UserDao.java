@@ -57,6 +57,23 @@ public class UserDao {
 		return result;
 	}
 	
+	public int getUserId(String username) {
+		try {
+			PreparedStatement statement = databaseConnection.prepareStatement(SELECT_USER_FOR_USERNAME);
+			statement.setString(1, username);
+			ResultSet result = statement.executeQuery();
+			
+         while(result.next()) {
+        	return result.getInt("userId");
+         }
+        		 
+		} catch(SQLException e) {
+			System.out.println("Connection Problem");
+		}
+		System.out.println("User id is not found");
+        return -1;
+	}
+	
 	private boolean isUserExists(String username) {
 		try {
 			PreparedStatement statement = databaseConnection.prepareStatement(SELECT_USER_FOR_USERNAME);

@@ -7,12 +7,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import com.yeditepe.todo.dao.TodosDao;
+import com.yeditepe.todo.helper.UserInfo;
 import com.yeditepe.todo.model.Todo;
+import com.yeditepe.todo.model.User;
 
-@WebServlet("/todo")
+@WebServlet("/")
 public class TodoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -29,12 +32,25 @@ public class TodoServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		TodosDao dao = new TodosDao();
-		ArrayList<Todo> todos = dao.getTodo(4);
+		User user = UserInfo.shared.getUser();
+		ArrayList<Todo> todos = dao.getTodo(user.getUserId());
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		
-		for (Todo todo : todos) {
-			out.println(todo.getTitle());
+		String action = request.getServletPath();
+		switch (action) {
+		case "/todoForm":
+			response.sendRedirect("view/todo/todo-form.jsp");
+			break;
+		case "/addTodo":
+			Todo newTodo = new Todo();
+			newTodo.setTitle(request.getParameter("title"));
+			newTodo.setStatus(Integer.parseInt(request.getParameter("status")));
+			newTodo.setTargetDate(LocalDate.parse(request.getParameter("targetDate")));
+			newTodo.setUserId(UserInfo.shared.getUser().getUserId());
+			dao.addTodo(newTodo);
+			response.sendRedirect("view/todo/todo.jsp");
+			break;
 		}
 	}
 
