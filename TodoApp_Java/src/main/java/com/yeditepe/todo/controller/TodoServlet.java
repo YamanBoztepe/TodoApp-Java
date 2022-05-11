@@ -1,5 +1,6 @@
 package com.yeditepe.todo.controller;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,6 +31,12 @@ public class TodoServlet extends HttpServlet {
 		case "/addTodo":
 			addNewTodo(request, response);
 			break;
+		case "/editTodoForm":
+			goToEditPage(request, response);
+			break;
+		case "/editTodo":
+			editTodo(request, response);
+			break;
 		}
 	}
 
@@ -50,6 +57,33 @@ public class TodoServlet extends HttpServlet {
 		newTodo.setUserId(UserInfo.shared.getUser().getUserId());
 		dao.addTodo(newTodo);
 		response.sendRedirect("view/todo/todo.jsp");
+	}
+	
+	private void goToEditPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		int id = Integer.parseInt(request.getParameter("todoId"));
+		RequestDispatcher dispatcher = request.getRequestDispatcher("view/todo/todo-form.jsp");
+		request.setAttribute("todoId", id);
+		try {
+			dispatcher.forward(request, response);
+			
+		} catch (ServletException e) {
+			e.printStackTrace();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+		}
+	}
+	
+	private void editTodo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		Todo updatedTodo = new Todo();
+		updatedTodo.setTitle(request.getParameter("title"));
+		updatedTodo.setStatus(Integer.parseInt(request.getParameter("status")));
+		updatedTodo.setTargetDate(LocalDate.parse(request.getParameter("targetDate")));
+		updatedTodo.setTodoId(Integer.parseInt(request.getParameter("todoId")));
+		if (dao.updateTodo(updatedTodo)) {
+			response.sendRedirect("view/todo/todo.jsp");	
+		}
 	}
 
 }

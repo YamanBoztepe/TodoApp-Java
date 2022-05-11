@@ -32,7 +32,13 @@ ArrayList<Todo> todos = dao.getTodo(user.getUserId());
 		<tr>
 			<td><%=todo.getTitle()%></td>
 			<td><%=todo.getTargetDate()%></td>
-			<td> <%=todo.getStringStatus()%></td>
+			<td><%=todo.getStringStatus()%></td>
+			<td>
+				<form action="<%=request.getContextPath()%>/editTodoForm">
+				<input type="hidden" name="todoId" value="<%=todo.getTodoId()%>">
+					<input type="submit" value="Edit Todo" />
+				</form>
+			</td>
 		</tr>
 	</table>
 	<%
