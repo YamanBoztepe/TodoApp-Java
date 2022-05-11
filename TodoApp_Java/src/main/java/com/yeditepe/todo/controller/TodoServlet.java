@@ -37,6 +37,9 @@ public class TodoServlet extends HttpServlet {
 		case "/editTodo":
 			editTodo(request, response);
 			break;
+		case "/completeTodo":
+			completeTodo(request, response);
+			break;
 		}
 	}
 
@@ -82,6 +85,13 @@ public class TodoServlet extends HttpServlet {
 		updatedTodo.setTargetDate(LocalDate.parse(request.getParameter("targetDate")));
 		updatedTodo.setTodoId(Integer.parseInt(request.getParameter("todoId")));
 		if (dao.updateTodo(updatedTodo)) {
+			response.sendRedirect("view/todo/todo.jsp");	
+		}
+	}
+	
+	private void completeTodo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		int id = Integer.parseInt(request.getParameter("todoId"));
+		if (dao.updateTodoStatus(3, id)) {
 			response.sendRedirect("view/todo/todo.jsp");	
 		}
 	}

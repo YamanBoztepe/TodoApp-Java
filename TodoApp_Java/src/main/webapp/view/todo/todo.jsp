@@ -28,19 +28,21 @@ ArrayList<Todo> todos = dao.getTodo(user.getUserId());
 	<%
 	for (Todo todo : todos) {
 	%>
+	<%
+	if (todo.getStatus() != 3) {
+	%>
 	<table>
 		<tr>
 			<td><%=todo.getTitle()%></td>
 			<td><%=todo.getTargetDate()%></td>
 			<td><%=todo.getStringStatus()%></td>
-			<td>
-				<form action="<%=request.getContextPath()%>/editTodoForm">
-				<input type="hidden" name="todoId" value="<%=todo.getTodoId()%>">
-					<input type="submit" value="Edit Todo" />
-				</form>
-			</td>
+			<td><a href = "<%=request.getContextPath()%>/editTodoForm?todoId=<%=todo.getTodoId()%>">Edit</a></td>
+			<td><a href = "<%=request.getContextPath()%>/completeTodo?todoId=<%=todo.getTodoId()%>">Done</a></td>
 		</tr>
 	</table>
+	<%
+	}
+	%>
 	<%
 	}
 	%>

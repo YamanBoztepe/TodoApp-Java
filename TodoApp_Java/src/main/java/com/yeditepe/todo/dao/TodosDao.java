@@ -18,6 +18,7 @@ public class TodosDao {
 	private static String SELECT_TODO_ID = "select * from Todos where todoId=?";
 	private static String ADD_TODO = "INSERT INTO Todos(title, target_date, status, userId) VALUES (?,?,?,?)";
 	private static String UPDATE_TODO = "update Todos set title = ?, target_date = ?, status = ? where todoId = ?;";
+	private static String UPDATE_TODO_STATUS = "update Todos set status = ? where todoId = ?;";
 	
 	public TodosDao() {
 		databaseConnection = Database.getConnection();
@@ -99,9 +100,21 @@ public class TodosDao {
 			statement.setDate(2, date);
 			statement.setInt(3, todo.getStatus());
 			statement.setInt(4, todo.getTodoId());
-			System.out.println("TodoId " + todo.getTodoId());
-			System.out.println("todo " + todo);
-			System.out.println("sta " + statement);
+			return statement.executeUpdate() > 0;
+			
+		} catch (SQLException e) {
+			System.out.println(e.getLocalizedMessage());
+			System.out.println("Connection Problem");
+		}
+		
+		return false;
+	}
+	
+	public boolean updateTodoStatus(Integer status, Integer todoId) {
+		try {
+			PreparedStatement statement = databaseConnection.prepareStatement(UPDATE_TODO_STATUS);
+			statement.setInt(1, status);
+			statement.setInt(2, todoId);
 			return statement.executeUpdate() > 0;
 			
 		} catch (SQLException e) {
