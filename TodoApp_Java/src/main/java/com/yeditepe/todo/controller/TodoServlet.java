@@ -54,12 +54,23 @@ public class TodoServlet extends HttpServlet {
 	
 	private void addNewTodo(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Todo newTodo = new Todo();
-		newTodo.setTitle(request.getParameter("title"));
-		newTodo.setStatus(Integer.parseInt(request.getParameter("status")));
-		newTodo.setTargetDate(LocalDate.parse(request.getParameter("targetDate")));
-		newTodo.setUserId(UserInfo.shared.getUser().getUserId());
-		dao.addTodo(newTodo);
-		response.sendRedirect("view/todo/todo.jsp");
+		String title = request.getParameter("title");
+		String status = request.getParameter("status");
+		String targetDate = request.getParameter("targetDate");
+		if (
+				   (title != null && !title.isBlank()) 
+				&& (status != null && !status.isBlank()) 
+				&& (targetDate != null && !targetDate.isBlank())
+		   ) {
+			newTodo.setTitle(request.getParameter("title"));
+			newTodo.setStatus(Integer.parseInt(request.getParameter("status")));
+			newTodo.setTargetDate(LocalDate.parse(request.getParameter("targetDate")));
+			newTodo.setUserId(UserInfo.shared.getUser().getUserId());
+			dao.addTodo(newTodo);
+			response.sendRedirect("view/todo/todo.jsp");	
+		} else {
+			goToFormPage(response);
+		}
 	}
 	
 	private void goToEditPage(HttpServletRequest request, HttpServletResponse response) throws IOException {

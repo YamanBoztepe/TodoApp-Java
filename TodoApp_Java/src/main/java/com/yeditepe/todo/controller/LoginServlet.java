@@ -2,6 +2,7 @@ package com.yeditepe.todo.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ public class LoginServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		activateCookie(request, response);
 		logIn(request, response);
 	}
 	
@@ -39,6 +41,20 @@ public class LoginServlet extends HttpServlet {
 			response.sendRedirect("view/todo/todo.jsp");
 		} else {
 			response.sendRedirect("view/login/loginFail.jsp");
+		}
+	}
+	
+	private void activateCookie(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		String isActive = request.getParameter("rememberMe");
+		if (username != null && password != null && isActive != null && isActive.equals("active")) {
+			Cookie usernameCookie = new Cookie("username", username);
+			Cookie passwordCookie = new Cookie("password", password);
+			usernameCookie.setMaxAge(60 * 60 * 24 * 7);
+			passwordCookie.setMaxAge(60 * 60 * 24 * 7);
+			response.addCookie(usernameCookie);
+			response.addCookie(passwordCookie);
 		}
 	}
 
